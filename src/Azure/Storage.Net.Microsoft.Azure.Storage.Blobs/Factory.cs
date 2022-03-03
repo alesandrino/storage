@@ -39,6 +39,27 @@ namespace Storage.Net
       }
 
       /// <summary>
+      /// Connect with Azurite blob storage emulator.
+      /// </summary>
+      /// <param name="_">The blob storage factory.</param>
+      /// <param name="host">The Azurite host name.</param>
+      /// <param name="port">The Azurite host port.</param>
+      /// <param name="accountName">The storage account name.</param>
+      /// <param name="key">The storage account key.</param>
+      /// <returns></returns>
+      public static IAzureBlobStorage AzureBlobStorageWithAzurite(this IBlobStorageFactory _, string host, int port, string accountName, string key)
+      {
+         var sasSigningCredentials = new StorageSharedKeyCredential(
+             accountName, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(key)));
+
+         var client = new BlobServiceClient(
+            new Uri($"http://{host}:{port}/{accountName}"),
+            sasSigningCredentials);
+         return new AzureBlobStorage(client, accountName, sasSigningCredentials);
+      }
+
+
+      /// <summary>
       /// 
       /// </summary>
       public static IAzureBlobStorage AzureBlobStorageWithSharedKey(this IBlobStorageFactory factory,
