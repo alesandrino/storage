@@ -55,7 +55,7 @@ namespace Storage.Net
              accountName, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(key)));
 
          string protocol = useHttps ? "https" : "http";
-         string uri = disableProductStyleUrl ? $"{protocol}://{host}:{port}" : $"{protocol}://{host}:{port}/{accountName}";
+         string uri = disableProductStyleUrl ? $"{protocol}://{host}:{port}/{accountName}" : $"{protocol}://{host}:{port}";
          var client = new BlobServiceClient(new Uri(uri), sasSigningCredentials);
          return new AzureBlobStorage(client, accountName, sasSigningCredentials);
       }
