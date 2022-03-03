@@ -46,15 +46,17 @@ namespace Storage.Net
       /// <param name="port">The Azurite host port.</param>
       /// <param name="accountName">The storage account name.</param>
       /// <param name="key">The storage account key.</param>
+      /// <param name="disableProductStyleUrl">Use <c>true</c> to disable product style URLs.</param>
+      /// <param name="useHttps">Use <c>true</c> to use HTTPS.</param>
       /// <returns></returns>
-      public static IAzureBlobStorage AzureBlobStorageWithAzurite(this IBlobStorageFactory _, string host, int port, string accountName, string key)
+      public static IAzureBlobStorage AzureBlobStorageWithAzurite(this IBlobStorageFactory _, string host, int port, string accountName, string key, bool disableProductStyleUrl, bool useHttps = false)
       {
          var sasSigningCredentials = new StorageSharedKeyCredential(
              accountName, Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(key)));
 
-         var client = new BlobServiceClient(
-            new Uri($"http://{host}:{port}/{accountName}"),
-            sasSigningCredentials);
+         string protocol = useHttps ? "https" : "http";
+         string uri = disableProductStyleUrl ? $"{protocol}://{host}:{port}" : $"{protocol}://{host}:{port}/{accountName}";
+         var client = new BlobServiceClient(new Uri(uri), sasSigningCredentials);
          return new AzureBlobStorage(client, accountName, sasSigningCredentials);
       }
 
